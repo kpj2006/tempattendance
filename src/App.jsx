@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { QRCode } from "qrcode.react";
-const contractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138"; // Replace after deployment
+import QRCode from "qrcode.react";
+const contractAddress = "0xde3FbB9C8b285756F951540B367048D9F1De97FA"; // Replace after deployment
 const contractABI = [
     {
       "inputs": [
@@ -227,7 +227,7 @@ const contractABI = [
       "stateMutability": "view",
       "type": "function"
     }
-];
+  ];
 
 function App() {
   const [provider, setProvider] = useState(null);
@@ -243,17 +243,67 @@ function App() {
   const [revokeAddress, setRevokeAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Added for better UX
 
+// Initialize wallet and check admin status
 useEffect(() => {
   const initialize = async () => {
+    if (!window.ethereum || contract) return; // Skip if no MetaMask or already connected
     try {
-      await connectWallet();
+      setIsLoading(true);
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const accounts = await provider.listAccounts();
+      if (accounts.length === 0) return; // Skip if no account connected
+
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+
+      setProvider(provider);
+      setSigner(signer);
+      setAccount(address);
+      setContract(contractInstance);
+
+      const adminAddress = await contractInstance.admin();
+      setIsAdmin(address.toLowerCase() === adminAddress.toLowerCase());
+
+      const count = await contractInstance.getAttendeesCount();
+      setAttendeesCount(count.toNumber());
     } catch (error) {
-      console.error("Failed to initialize wallet:", error);
-      // Optionally set a state to show an error message in UI
+      console.error("Wallet initialization failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   initialize();
-}, []);
+}, []); // Empty deps: run once on mount
+
+// Handle /checkin for public
+useEffect(() => {
+  const handleCheckIn = async () => {
+    if (!contract) return; // Wait for contract
+    const pathname = window.location.pathname;
+    const searchParams = new URLSearchParams(window.location.search);
+    const secretFromUrl = searchParams.get('secret');
+    if (pathname !== '/checkin' || !secretFromUrl) return;
+
+    try {
+      setIsLoading(true);
+      const tx = await contract.checkIn(secretFromUrl);
+      await tx.wait();
+      alert("Check-in successful!");
+      const count = await contract.getAttendeesCount();
+      setAttendeesCount(count.toNumber());
+      window.history.replaceState({}, '', '/'); // Clear URL
+    } catch (error) {
+      console.error("Check-in failed:", error);
+      alert("Check-in failed: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  handleCheckIn();
+}, [contract]);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -301,7 +351,7 @@ useEffect(() => {
       const tx = await contract.setSecret(newSecret);
       await tx.wait();
       setSecret(newSecret);
-      setQrUrl(`https://yourdapp.com/checkin?secret=${newSecret}`);
+      setQrUrl(`http://${'192.168.0.106'}:5173/checkin?secret=${newSecret}`); // Replace 192.168.1.100 with your IP
       alert("Secret updated and QR code generated!");
       setNewSecret('');
     } catch (error) {
@@ -326,6 +376,7 @@ useEffect(() => {
       alert("Check-in successful!");
       await updateAttendeesCount(contract);
       await viewAttendees();
+      window.history.replaceState({}, '', '/');
     } catch (error) {
       console.error("Check-in error:", error);
       alert("Check-in failed: " + error.message);
