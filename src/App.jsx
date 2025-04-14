@@ -351,8 +351,8 @@ useEffect(() => {
       const tx = await contract.setSecret(newSecret);
       await tx.wait();
       setSecret(newSecret);
-      setQrUrl(`http://${'192.168.0.106'}:5173/checkin?secret=${newSecret}`); // Replace 192.168.1.100 with your IP
-      alert("Secret updated and QR code generated!");
+      setQrUrl(`https://attendencedapp.vercel.app/checkin?secret=${newSecret}`); // Updated to Vercel URL      
+      alert("Secret updated and QR code generated!"); 
       setNewSecret('');
     } catch (error) {
       console.error("Error setting secret:", error);
