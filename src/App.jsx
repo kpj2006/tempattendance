@@ -137,6 +137,7 @@ const contractABI = [
 			},
 			{
 				"internalType": "uint256",
+
 				"name": "_endTime",
 				"type": "uint256"
 			}
@@ -518,7 +519,7 @@ function App() {
     if (success) {
       // Generate QR with secret and end time in milliseconds
       const endTimeMs = endTimeSec * 1000; // Convert seconds to milliseconds
-      setQrUrl(`https://attendencedapp.vercel.app/checkin?secret=${encodeURIComponent(adminSecret)}&endTime=${endTimeMs}`);
+      setQrUrl(`https://tempattendance-fsd7.vercel.app/checkin?secret=${encodeURIComponent(adminSecret)}&endTime=${endTimeMs}`);
       setAdminSecret('');
       setAdminEndDateTime('');
     }
