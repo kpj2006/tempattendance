@@ -1,43 +1,290 @@
-@import "tailwindcss";
-#root {
-  max-width: 1280px;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(26, 21, 48, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.4);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 184, 166, 0.6);
+}
+
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  background-image: linear-gradient(
+    to right,
+    rgba(20, 184, 166, 0.8) 0%,
+    rgba(147, 51, 234, 0.8) 50%,
+    rgba(20, 184, 166, 0.8) 100%
+  );
+  animation: shimmer 3s infinite;
+}
+
+/* Button styles */
+button {
+  transition: all 0.2s ease;
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Toast customization */
+.Toastify__toast {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+  background-color: rgba(26, 21, 48, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
+}
+
+.Toastify__toast--success {
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2)) !important;
+}
+
+.Toastify__toast--error {
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)) !important;
+}
+
+.Toastify__toast--info {
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2)) !important;
+}
+
+.Toastify__toast--warning {
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2)) !important;
+}
+
+.Toastify__progress-bar {
+  background: linear-gradient(to right, #14b8a6, #8b5cf6) !important;
+}
+
+/* Dark theme overrides */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
+
+/* Laptop design for QR code */
+.laptop-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.laptop-screen {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(to bottom, #2d3748, #1a202c);
+  border-radius: 10px 10px 0 0;
+  border: 2px solid #4a5568;
+  border-bottom: none;
+  overflow: hidden;
+  transform-origin: bottom center;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+  animation: openLaptop 1.5s ease-out forwards;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes openLaptop {
+  0% {
+    transform: rotateX(90deg);
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  100% {
+    transform: rotateX(0deg);
   }
 }
 
-.card {
-  padding: 2em;
+.laptop-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  padding: 15px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.read-the-docs {
-  color: #888;
+.laptop-base {
+  position: relative;
+  width: 100%;
+  height: 15px;
+  background: linear-gradient(to bottom, #4a5568, #2d3748);
+  border-radius: 0 0 10px 10px;
+  border: 2px solid #4a5568;
+  border-top: none;
+  transform-origin: top center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.laptop-trackpad {
+  position: absolute;
+  width: 30%;
+  height: 4px;
+  background: #718096;
+  border-radius: 2px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Glowing orbs for background effect */
+.glowing-orb {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: float 8s ease-in-out infinite;
+}
+
+.glowing-orb:nth-child(1) {
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.8), rgba(20, 184, 166, 0.2));
+}
+
+.glowing-orb:nth-child(2) {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.8), rgba(139, 92, 246, 0.2));
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+/* Add these new styles for the larger laptop UI at the end of the file */
+
+/* Larger laptop design for admin controls */
+.laptop-container-large {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+}
+
+.laptop-screen-large {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 500px;
+  background: linear-gradient(to bottom, #2d3748, #1a202c);
+  border-radius: 16px 16px 0 0;
+  border: 2px solid #4a5568;
+  border-bottom: none;
+  overflow: hidden;
+  transform-origin: bottom center;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  animation: openLaptop 1.5s ease-out forwards;
+}
+
+.laptop-content-large {
+  position: relative;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  padding: 20px;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.laptop-base-large {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to bottom, #4a5568, #2d3748);
+  border-radius: 0 0 16px 16px;
+  border: 2px solid #4a5568;
+  border-top: none;
+  transform-origin: top center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.laptop-trackpad-large {
+  position: absolute;
+  width: 30%;
+  height: 6px;
+  background: #718096;
+  border-radius: 3px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Make the website full-width */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100vw;
+  max-width: 100%;
+}
+
+/* Improve scrollbar for full-width design */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 21, 48, 0.3);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(20, 184, 166, 0.4);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 184, 166, 0.6);
 }
