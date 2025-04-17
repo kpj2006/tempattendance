@@ -1,0 +1,71 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attendancewithnend {
+    address public admin;
+    bytes32 public secretHash;
+    mapping(address => bool) public hasCheckedIn;
+    address[] public attendees;
+    
+    event CheckIn(address indexed attendee, uint timestamp);
+    event SecretUpdated(bytes32 newSecretHash);
+    event CheckInRevoked(address indexed attendee);
+    event EventReset();
+
+    constructor() {
+        admin = msg.sender;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can call this");
+        _;
+    }
+
+    function setSecret(string memory _secret) external onlyAdmin {
+        secretHash = keccak256(abi.encodePacked(_secret));
+        emit SecretUpdated(secretHash);
+    }
+
+    function checkIn(string memory _secret) external {
+        require(keccak256(abi.encodePacked(_secret)) == secretHash, "Invalid secret");
+        require(!hasCheckedIn[msg.sender], "Already checked in");
+        
+        hasCheckedIn[msg.sender] = true;
+        attendees.push(msg.sender);
+        emit CheckIn(msg.sender, block.timestamp);
+    }
+
+    function revokeCheckIn(address _attendee) external onlyAdmin {
+        require(hasCheckedIn[_attendee], "Not checked in");
+        
+        hasCheckedIn[_attendee] = false;
+        
+        // Remove from attendees array
+        for (uint i = 0; i < attendees.length; i++) {
+            if (attendees[i] == _attendee) {
+                attendees[i] = attendees[attendees.length - 1];
+                attendees.pop();
+                break;
+            }
+        }
+        
+        emit CheckInRevoked(_attendee);
+    }
+
+    function resetEvent() external onlyAdmin {
+        for (uint i = 0; i < attendees.length; i++) {
+            hasCheckedIn[attendees[i]] = false;
+        }
+        delete attendees;
+        secretHash = bytes32(0);
+        emit EventReset();
+    }
+
+    function getAttendeesCount() external view returns (uint) {
+        return attendees.length;
+    }
+
+    function getAttendees() external view returns (address[] memory) {
+        return attendees;
+    }
+}
