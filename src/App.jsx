@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useCallback } from "react"
 import { ethers } from "ethers"
 import QRCode from "qrcode.react"
@@ -11,14 +9,12 @@ import {
   Clock,
   Users,
   RefreshCw,
+  QrCode,
   Shield,
   Copy,
   ExternalLink,
   Settings,
   Check,
-  Laptop,
-  Power,
-  Zap,
 } from "lucide-react"
 
 // Contract details
@@ -260,7 +256,7 @@ const contractABI = [
       {
         internalType: "bool",
         name: "",
-        type: "bool",
+        type:  "bool",
       },
     ],
     stateMutability: "view",
@@ -333,8 +329,6 @@ export default function AttendanceDapp() {
   const [adminEndDateTime, setAdminEndDateTime] = useState("")
   const [qrUrl, setQrUrl] = useState("")
   const [revokeAddress, setRevokeAddress] = useState("")
-  const [isLaptopOpen, setIsLaptopOpen] = useState(false)
-  const [isLaptopPoweredOn, setIsLaptopPoweredOn] = useState(false)
 
   // Attendee state
   const [attendeesCount, setAttendeesCount] = useState(0)
@@ -415,18 +409,6 @@ export default function AttendanceDapp() {
 
     handleCheckInFromUrl()
   }, [contract, signer, account])
-
-  // Laptop animation effects
-  useEffect(() => {
-    if (isLaptopOpen) {
-      const timer = setTimeout(() => {
-        setIsLaptopPoweredOn(true)
-      }, 1000)
-      return () => clearTimeout(timer)
-    } else {
-      setIsLaptopPoweredOn(false)
-    }
-  }, [isLaptopOpen])
 
   // Wallet connection
   const connectWallet = async () => {
@@ -528,7 +510,6 @@ export default function AttendanceDapp() {
       )
       setAdminSecret("")
       setAdminEndDateTime("")
-      setIsLaptopOpen(true)
     }
   }
 
@@ -561,8 +542,6 @@ export default function AttendanceDapp() {
         setQrUrl("")
         setCurrentEndTime(null)
         setHasUserCheckedIn(null)
-        setIsLaptopOpen(false)
-        setIsLaptopPoweredOn(false)
       }
     }
   }
@@ -675,12 +654,6 @@ export default function AttendanceDapp() {
 
   return (
     <div className="min-h-screen w-full bg-[#0f0b1e] text-purple-100 flex flex-col items-center">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="glowing-orb absolute top-[10%] left-[20%]"></div>
-        <div className="glowing-orb absolute bottom-[20%] right-[10%]"></div>
-      </div>
-
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -705,7 +678,7 @@ export default function AttendanceDapp() {
       )}
 
       {/* Header */}
-      <div className="w-full max-w-5xl pt-12 pb-6 px-4 text-center relative z-10">
+      <div className="w-full max-w-5xl pt-12 pb-6 px-4 text-center">
         <div className="w-16 h-16 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
           <div className="w-10 h-10 bg-purple-500 rounded-full"></div>
         </div>
@@ -714,7 +687,7 @@ export default function AttendanceDapp() {
       </div>
 
       {/* Connection Status */}
-      <div className="w-full max-w-5xl flex flex-col items-center mb-8 px-4 relative z-10">
+      <div className="w-full max-w-5xl flex flex-col items-center mb-8 px-4">
         {account ? (
           <div className="flex flex-col items-center gap-2">
             <button className="px-6 py-2 bg-green-600/90 text-white rounded-full font-medium text-sm hover:bg-green-700/90 transition-all shadow-md flex items-center gap-2">
@@ -754,7 +727,7 @@ export default function AttendanceDapp() {
 
       {/* Main Content */}
       {!account ? (
-        <div className="w-full max-w-5xl flex-1 flex flex-col items-center justify-center px-4 pb-12 relative z-10">
+        <div className="w-full max-w-5xl flex-1 flex flex-col items-center justify-center px-4 pb-12">
           <div className="w-24 h-24 bg-purple-900/30 rounded-full flex items-center justify-center mb-6">
             <Shield className="w-12 h-12 text-purple-400" />
           </div>
@@ -764,116 +737,81 @@ export default function AttendanceDapp() {
           </p>
         </div>
       ) : (
-        <div className="w-full max-w-5xl flex-1 flex flex-col px-4 pb-12 space-y-8 relative z-10">
+        <div className="w-full max-w-5xl flex-1 flex flex-col px-4 pb-12 space-y-8">
           {/* Admin Controls */}
           {isAdmin && (
-            <div className="w-full rounded-xl overflow-hidden">
-              <div className="px-6 py-4 bg-gradient-to-r from-purple-900/80 to-indigo-900/80 backdrop-blur-md flex items-center rounded-t-xl border-b border-purple-500/30">
+            <div className="w-full bg-[#1a1530] rounded-xl border border-purple-900/50 overflow-hidden">
+              <div className="px-6 py-4 border-b border-purple-900/50 flex items-center">
                 <Settings className="w-5 h-5 text-purple-400 mr-2" />
-                <h2 className="text-xl font-bold text-purple-300">Admin Control Center</h2>
+                <h2 className="text-xl font-bold text-purple-300">Admin Controls</h2>
               </div>
 
-              <div className="p-6 space-y-6 bg-[#1a1530]/90 backdrop-blur-md rounded-b-xl border border-t-0 border-purple-900/50">
+              <div className="p-6 space-y-6">
                 {/* Generate QR Code */}
-                <div className="rounded-lg">
-                  <h3 className="text-lg font-semibold text-purple-300 mb-4 flex items-center gap-2">
-                    <Laptop className="w-5 h-5 text-purple-400" />
-                    QR Code Generator
-                  </h3>
+                <div className="bg-[#211a3b] p-5 rounded-lg border border-purple-900/50">
+                  <h3 className="text-lg font-semibold text-purple-300 mb-4">Generate Check-in QR Code</h3>
 
-                  {!qrUrl ? (
-                    <div className="space-y-4 bg-[#211a3b]/80 p-5 rounded-lg border border-purple-900/50">
-                      <div>
-                        <label className="block text-sm font-medium text-purple-300/70 mb-1">Secret Phrase</label>
-                        <input
-                          type="text"
-                          value={adminSecret}
-                          onChange={(e) => setAdminSecret(e.target.value)}
-                          placeholder="Enter secret phrase for check-in"
-                          className="w-full p-3 bg-[#0f0b1e] border border-purple-900/50 rounded-lg focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all text-purple-100 placeholder-purple-500/50"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-purple-300/70 mb-1">Check-in End Time</label>
-                        <input
-                          type="datetime-local"
-                          value={adminEndDateTime}
-                          onChange={(e) => setAdminEndDateTime(e.target.value)}
-                          className="w-full p-3 bg-[#0f0b1e] border border-purple-900/50 rounded-lg focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all text-purple-100"
-                          min={new Date().toISOString().slice(0, 16)}
-                        />
-                      </div>
-
-                      <div className="flex gap-4">
-                        <button
-                          onClick={setSecretAndEndTime}
-                          disabled={isLoading || !adminSecret || !adminEndDateTime}
-                          className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
-                        >
-                          <Power className="w-4 h-4" />
-                          Generate QR Code
-                        </button>
-                      </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300/70 mb-1">Secret Phrase</label>
+                      <input
+                        type="text"
+                        value={adminSecret}
+                        onChange={(e) => setAdminSecret(e.target.value)}
+                        placeholder="Enter secret phrase for check-in"
+                        className="w-full p-3 bg-[#0f0b1e] border border-purple-900/50 rounded-lg focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all text-purple-100 placeholder-purple-500/50"
+                      />
                     </div>
-                  ) : (
-                    <div className="laptop-container-large">
-                      <div className={laptop-screen-large ${isLaptopOpen ? "open" : ""}}>
-                        <div className="laptop-content-large custom-scrollbar">
-                          <div className="flex flex-col items-center justify-center h-full">
-                            {isLaptopPoweredOn ? (
-                              <div className="flex flex-col items-center space-y-6 p-6 animate-fadeIn">
-                                <div className="flex items-center justify-center gap-2 mb-2">
-                                  <Zap className="w-5 h-5 text-purple-400" />
-                                  <h3 className="text-xl font-bold text-purple-300">QR Code Ready</h3>
-                                </div>
 
-                                <div className="bg-gradient-to-r from-purple-900/30 to-indigo-900/30 p-8 rounded-xl border border-purple-500/20 shadow-lg">
-                                  <div className="bg-white p-6 rounded-lg shadow-inner">
-                                    <QRCode value={qrUrl} size={200} level="H" className="mx-auto" />
-                                  </div>
-                                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-purple-300/70 mb-1">Check-in End Time</label>
+                      <input
+                        type="datetime-local"
+                        value={adminEndDateTime}
+                        onChange={(e) => setAdminEndDateTime(e.target.value)}
+                        className="w-full p-3 bg-[#0f0b1e] border border-purple-900/50 rounded-lg focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all text-purple-100"
+                        min={new Date().toISOString().slice(0, 16)}
+                      />
+                    </div>
 
-                                <div className="flex flex-col items-center gap-2 mt-4 w-full">
-                                  <p className="text-xs text-purple-300/70 break-all max-w-md text-center">{qrUrl}</p>
-                                  <div className="flex items-center gap-2">
-                                    <button
-                                      onClick={copyToClipboard}
-                                      className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-purple-300 bg-purple-900/30 rounded-full hover:bg-purple-800/30 transition-colors"
-                                    >
-                                      <Copy className="w-4 h-4 mr-1" />
-                                      {copySuccess ? "Copied!" : "Copy URL"}
-                                    </button>
-                                    <button
-                                      onClick={() => setIsLaptopOpen(false)}
-                                      className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-red-300 bg-red-900/30 rounded-full hover:bg-red-800/30 transition-colors"
-                                    >
-                                      <Power className="w-4 h-4 mr-1" />
-                                      Close Laptop
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="flex flex-col items-center justify-center h-full animate-pulse">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center">
-                                  <Power className="w-8 h-8 text-white" />
-                                </div>
-                                <p className="mt-4 text-purple-300/70">Booting up...</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={setSecretAndEndTime}
+                        disabled={isLoading || !adminSecret || !adminEndDateTime}
+                        className="flex-1 bg-purple-600/80 text-white py-3 px-4 rounded-lg hover:bg-purple-700/80 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
+                      >
+                        <QrCode className="w-4 h-4" />
+                        Generate QR
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* QR Code Display */}
+                  {qrUrl && (
+                    <div className="mt-6 p-5 bg-[#0f0b1e] rounded-lg border border-purple-900/50 flex flex-col items-center">
+                      <h4 className="text-md font-semibold text-purple-300 mb-4 flex items-center gap-2">
+                        <QrCode className="w-4 h-4 text-purple-400" />
+                        Check-in QR Code
+                      </h4>
+                      <div className="bg-white p-4 rounded-lg">
+                        <QRCode value={qrUrl} size={180} level="H" className="mx-auto" />
                       </div>
-                      <div className="laptop-base-large">
-                        <div className="laptop-trackpad-large"></div>
+                      <div className="flex flex-col items-center gap-2 mt-4 w-full">
+                        <p className="text-xs text-purple-300/70 break-all max-w-md text-center">{qrUrl}</p>
+                        <button
+                          onClick={copyToClipboard}
+                          className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-purple-300 bg-purple-900/30 rounded-full hover:bg-purple-800/30 transition-colors"
+                        >
+                          <Copy className="w-3 h-3 mr-1" />
+                          {copySuccess ? "Copied!" : "Copy URL"}
+                        </button>
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Revoke Check-in */}
-                <div className="bg-[#211a3b]/80 p-5 rounded-lg border border-purple-900/50">
+                <div className="bg-[#211a3b] p-5 rounded-lg border border-purple-900/50">
                   <h3 className="text-lg font-semibold text-purple-300 mb-4">Revoke Attendee Check-in</h3>
                   <input
                     type="text"
@@ -892,7 +830,7 @@ export default function AttendanceDapp() {
                 </div>
 
                 {/* Reset Event */}
-                <div className="bg-[#211a3b]/80 p-5 rounded-lg border border-purple-900/50">
+                <div className="bg-[#211a3b] p-5 rounded-lg border border-purple-900/50">
                   <h3 className="text-lg font-semibold text-purple-300 mb-4">Reset Event</h3>
                   <p className="text-sm text-purple-300/70 mb-4">
                     This will clear all attendees and reset the event. You'll need to set a new secret afterward.
@@ -917,7 +855,7 @@ export default function AttendanceDapp() {
               disabled={
                 isLoading || hasUserCheckedIn === true || (currentEndTime && Date.now() > currentEndTime.getTime())
               }
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center gap-2"
               title={
                 hasUserCheckedIn === true
                   ? "You have already checked in"
@@ -933,7 +871,7 @@ export default function AttendanceDapp() {
             <button
               onClick={viewAttendees}
               disabled={isLoading}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center gap-2"
+              className="px-6 py-3 bg-blue-600/80 text-white rounded-lg hover:bg-blue-700/80 transition-all disabled:opacity-60 disabled:cursor-not-allowed font-medium flex items-center gap-2"
             >
               <Users className="w-5 h-5" />
               View Attendees
@@ -942,7 +880,7 @@ export default function AttendanceDapp() {
 
           {/* Attendees List */}
           {showAttendees && (
-            <div className="w-full bg-[#1a1530]/90 backdrop-blur-md rounded-xl border border-purple-900/50 overflow-hidden">
+            <div className="w-full bg-[#1a1530] rounded-xl border border-purple-900/50 overflow-hidden">
               <div className="px-6 py-4 border-b border-purple-900/50 flex items-center justify-between">
                 <div className="flex items-center">
                   <Users className="w-5 h-5 text-purple-400 mr-2" />
@@ -957,7 +895,7 @@ export default function AttendanceDapp() {
                     <div className="border-b border-purple-900/50 py-2 px-4 bg-[#211a3b] text-xs text-purple-300/70">
                       attendees-list.eth
                     </div>
-                    <div className="p-4 max-h-64 overflow-y-auto custom-scrollbar">
+                    <div className="p-4 max-h-64 overflow-y-auto">
                       <table className="w-full border-collapse">
                         <thead className="bg-[#211a3b]">
                           <tr>
@@ -1003,7 +941,7 @@ export default function AttendanceDapp() {
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-[#0f0b1e] rounded-lg border border-purple-900/50 p-12 flex flex-col items-center justify-center relative">
+                  <div className="bg-[#0f0b1e] rounded-lg border border-purple-900/50 p-12 flex flex-col items-center justify-center">
                     <div className="border-b border-purple-900/50 py-2 px-4 bg-[#211a3b] text-xs text-purple-300/70 absolute top-0 left-0 right-0">
                       attendees-list.eth
                     </div>
@@ -1017,7 +955,7 @@ export default function AttendanceDapp() {
           )}
 
           {/* Event Status */}
-          <div className="w-full bg-[#1a1530]/90 backdrop-blur-md rounded-xl border border-purple-900/50 overflow-hidden">
+          <div className="w-full bg-[#1a1530] rounded-xl border border-purple-900/50 overflow-hidden">
             <div className="px-6 py-4 border-b border-purple-900/50 flex items-center">
               <Clock className="w-5 h-5 text-purple-400 mr-2" />
               <h2 className="text-xl font-bold text-purple-300">Event Status</h2>
@@ -1025,20 +963,20 @@ export default function AttendanceDapp() {
 
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-[#211a3b]/80 p-4 rounded-lg border border-purple-900/50">
+                <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
                   <div className="text-sm text-purple-300/70 mb-1">Attendees</div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center  gap-2">
                     <Users className="w-5 h-5 text-purple-400" />
                     <span className="text-2xl font-bold text-purple-200">{attendeesCount}</span>
                   </div>
                 </div>
 
-                <div className="bg-[#211a3b]/80 p-4 rounded-lg border border-purple-900/50">
+                <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
                   <div className="text-sm text-purple-300/70 mb-1">Check-in Ends</div>
-                  <div className="text-purple-200 font-medium">{renderEndTime()}</div>
+                  <div className="text-purple-200  font-medium">{renderEndTime()}</div>
                 </div>
 
-                <div className="bg-[#211a3b]/80 p-4 rounded-lg border border-purple-900/50">
+                <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
                   <div className="text-sm text-purple-300/70 mb-1">Your Status</div>
                   <div className="font-medium">{renderStatusBadge()}</div>
                 </div>
@@ -1049,7 +987,7 @@ export default function AttendanceDapp() {
       )}
 
       {/* Footer */}
-      <div className="w-full bg-[#0a071a] border-t border-purple-900/30 p-4 text-center text-sm text-purple-300/50 relative z-10">
+      <div className="w-full bg-[#0a071a] border-t border-purple-900/30 p-4 text-center text-sm text-purple-300/50">
         <div className="flex items-center justify-center gap-2">
           <Shield className="w-4 h-4 text-purple-400/50" />
           <span>Decentralized Attendance System powered by Ethereum</span>
@@ -1059,7 +997,7 @@ export default function AttendanceDapp() {
             rel="noopener noreferrer"
             className="inline-flex items-center text-purple-400/70 hover:text-purple-400 ml-1"
           >
-            <ExternalLink className="w-3 h-3 ml-0.5" />
+            <ExternalLink className="w-3 h-3  ml-0.5" />
           </a>
         </div>
       </div>
