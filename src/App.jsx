@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect, useCallback } from "react"
 import { ethers } from "ethers"
 import QRCode from "qrcode.react"
@@ -258,7 +256,7 @@ const contractABI = [
       {
         internalType: "bool",
         name: "",
-        type: "bool",
+        type:  "bool",
       },
     ],
     stateMutability: "view",
@@ -967,7 +965,7 @@ export default function AttendanceDapp() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
                   <div className="text-sm text-purple-300/70 mb-1">Attendees</div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center  gap-2">
                     <Users className="w-5 h-5 text-purple-400" />
                     <span className="text-2xl font-bold text-purple-200">{attendeesCount}</span>
                   </div>
@@ -975,7 +973,7 @@ export default function AttendanceDapp() {
 
                 <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
                   <div className="text-sm text-purple-300/70 mb-1">Check-in Ends</div>
-                  <div className="text-purple-200 font-medium">{renderEndTime()}</div>
+                  <div className="text-purple-200  font-medium">{renderEndTime()}</div>
                 </div>
 
                 <div className="bg-[#211a3b] p-4 rounded-lg border border-purple-900/50">
@@ -999,7 +997,7 @@ export default function AttendanceDapp() {
             rel="noopener noreferrer"
             className="inline-flex items-center text-purple-400/70 hover:text-purple-400 ml-1"
           >
-            <ExternalLink className="w-3 h-3 ml-0.5" />
+            <ExternalLink className="w-3 h-3  ml-0.5" />
           </a>
         </div>
       </div>
