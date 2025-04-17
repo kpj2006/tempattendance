@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar */
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -22,7 +22,7 @@
   background: rgba(20, 184, 166, 0.6);
 }
 
-/* Animations */
+
 @keyframes pulse {
   0%,
   100% {
@@ -57,7 +57,7 @@
   animation: shimmer 3s infinite;
 }
 
-/* Button styles */
+
 button {
   transition: all 0.2s ease;
 }
@@ -66,7 +66,7 @@ button:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-/* Toast customization */
+
 .Toastify__toast {
   border-radius: 12px !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
@@ -95,12 +95,12 @@ button:active:not(:disabled) {
   background: linear-gradient(to right, #14b8a6, #8b5cf6) !important;
 }
 
-/* Dark theme overrides */
+
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: invert(0.8);
 }
 
-/* Laptop design for QR code */
+
 .laptop-container {
   position: relative;
   width: 100%;
@@ -201,9 +201,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   }
 }
 
-/* Add these new styles for the larger laptop UI at the end of the file */
 
-/* Larger laptop design for admin controls */
 .laptop-container-large {
   position: relative;
   width: 100%;
@@ -260,7 +258,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   transform: translate(-50%, -50%);
 }
 
-/* Make the website full-width */
+
 body {
   margin: 0;
   padding: 0;
@@ -269,7 +267,7 @@ body {
   max-width: 100%;
 }
 
-/* Improve scrollbar for full-width design */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
