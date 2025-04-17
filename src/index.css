@@ -28,8 +28,8 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  overflow-x: visible; /* Allow horizontal scrolling if needed */
-  overflow-y: visible; /* Allow vertical scrolling */
+  overflow-x: visible; 
+  overflow-y: visible; 
 }
 
 #root, .app, main {
